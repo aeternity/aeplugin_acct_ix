@@ -1,0 +1,25 @@
+%% -*- mode: erlang; erlang-indent-level: 4; indent-tabs-mode: nil -*-
+{application, aeplugin_acct_ix,
+ [{description, "POC AE indexing plugin"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, {aeplugin_acct_ix_app, []}},
+  {start_phases, []},
+  {applications, [kernel, lib, aecore]},
+  {env,
+   [{'$setup_hooks',
+     [{normal,
+       [
+	{110, {aeplugin_acct_ix_app, check_env}}
+       ]}
+     ]},
+    {'$app_ctrl',
+     [{modify,
+       [{roles, [{basic, [join]}]}
+       ]}
+     ]}
+   ]},
+  {modules, []},
+  {licenses, ["ISC"]},
+  {links, ["https://github.com/aeternity/aeternity"]}
+ ]}.
