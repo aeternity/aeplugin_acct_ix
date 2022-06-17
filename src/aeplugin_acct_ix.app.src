@@ -5,9 +5,11 @@
   {registered, []},
   {mod, {aeplugin_acct_ix_app, []}},
   {start_phases, []},
-  {applications, [kernel, lib, aecore]},
+  {applications, [kernel, stdlib, aecore, lager]},
   {env,
-   [{'$setup_hooks',
+   [{'$aec_db_add_index_plugins', {aeplugin_acct_ix_db, add_index_plugins}},
+    {'$aec_db_create_tables', {aeplugin_acct_ix_db, add_indexes}},
+    {'$setup_hooks',
      [{normal,
        [
 	{110, {aeplugin_acct_ix_app, check_env}}

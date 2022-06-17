@@ -1,19 +1,19 @@
 %% -*- mode:erlang; erlang-indent-level: 4; indent-tabs-mode: nil -*-
 
 Append =
-fun(K, V, Cfg) ->
+fun(K, V, Cfg) when is_list(V) ->
         L = proplists:get_value(K, Cfg, []),
-        lists:keystore(K, 1, Cfg, {K, L ++ [V]})
+        lists:keystore(K, 1, Cfg, {K, L ++ V})
 end.
 
 case os:getenv("AE_ROOT") of
     false ->
         CONFIG;
     Root ->
-        CONFIG1 = Append(project_app_dirs,
-                         filename:join(Root, "apps/*"), CONFIG),
-        io:fwrite("CONFIG1 = ~p~n", [CONFIG1]),
-        MyDeps = proplists:get_value(deps, CONFIG1, []),
+        code:add_pathsz(
+          [D || D <- filelib:wildcard(
+                       filename:join(Root, "apps/*/include"))]),
+        MyDeps = proplists:get_value(deps, CONFIG, []),
         AeDeps = proplists:get_value(
                    deps,
                    rebar_config:consult(Root)),
@@ -28,8 +28,8 @@ case os:getenv("AE_ROOT") of
                       Dep
               end, MyDeps),
         case MyDeps1 of
-            [] -> CONFIG1;
+            [] -> CONFIG;
             _ when MyDeps1 =/= MyDeps ->
-                lists:keystore(deps, 1, CONFIG1, {deps, MyDeps1})
+                lists:keystore(deps, 1, CONFIG, {deps, MyDeps1})
         end
 end.
